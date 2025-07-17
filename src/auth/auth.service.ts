@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
@@ -14,7 +15,8 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
+  private readonly logger = new Logger(AuthService.name);
 
   async register(registerUserDto: RegisterUserDto) {
     const { email, password } = registerUserDto;
@@ -30,6 +32,8 @@ export class AuthService {
       },
     });
     const { password: _, ...result } = user;
+    this.logger.log(`User with email "${user.email}" successfully registered.`);
+
     return result;
   }
 
@@ -44,6 +48,7 @@ export class AuthService {
       throw new UnauthorizedException('The username or password is incorrect');
     }
     const payload = { sub: user.id, email: user.email };
+    this.logger.log(`User with email "${user.email}" successfully logged in.`);
     return {
       accessToken: await this.jwtService.signAsync(payload),
     };

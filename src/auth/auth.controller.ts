@@ -12,7 +12,9 @@ export class AuthController {
     @Post('register')
     @ApiOperation({ summary: 'Register a new user' })
     @ApiResponse({ status: 201, description: 'User successfully registered.' })
+    @ApiResponse({ status: 400, description: 'Bad Request. Validation failed.' })
     @ApiResponse({ status: 409, description: 'User with this email already exists.' })
+
     register(@Body() registerUserDto: RegisterUserDto) {
         return this.authService.register(registerUserDto);
     }
@@ -21,6 +23,7 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Log in a user and return a JWT' })
     @ApiResponse({ status: 200, description: 'Login successful, token returned.' })
+    @ApiResponse({ status: 400, description: 'Bad Request. Validation failed.' })
     @ApiResponse({ status: 401, description: 'Invalid credentials.' })
     login(@Body() loginUserDto: LoginUserDto) {
         return this.authService.login(loginUserDto);
